@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-firestore.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+		
+	}
+	  #address {
+		color: gray;
+	  }
+	  #data {
+	  	position: absolute;
+	  	top: 10px;
+	  	right: 34%;
+	  	z-index: 5;
+	  	background-color:#fff;
+	  	font-family: 'Roboto','sans-serif';
+		padding: 5px;
+		line-height: 25px;
+		text-align: center;
+		display: none;
+		}
+    </style>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <input id="address" type ="textbox">
+      <button id = "path">Find</button>
+      <button onclick = "Reset()">reset</button>
+      <button onclick = "Show()">SendData</button>
+    </div>
+    <div id="map"></div>
+    <div id = "data">
+			<span>Location1: </span><input id = "location1" type = "textbox"><br>
+    		<span>Location2: </span><input id = "location2" type = "textbox"><br>
+    		<span>Location3: </span><input id = "location3" type = "textbox"><br>
+			<span>Location4: </span><input id = "location4" type = "textbox"><br>
+			<span>Location5: </span><input id = "location5" type = "textbox"><br>
+			<button onclick = "Cancel()">Cancel</button>
+			<button onclick = "Sending()">Send</button>
+    </div>
+    <script>
+		var config = {
+    					apiKey: "AIzaSyBwBhv14BJEc4lUiYtWrBbpM7cMQpZU23w",
+    					authDomain: "application-project-d9934.firebaseapp.com",
+    					databaseURL: "https://application-project-d9934.firebaseio.com",
+    					projectId: "application-project-d9934",
+    					storageBucket: "application-project-d9934.appspot.com",
+    					messagingSenderId: "747241468892",
+    					appId: "1:747241468892:web:7d2a2f05c178d1d0769519",
+    					measurementId: "G-K0JB9TT4G8"
+ 		};
+ 		   firebase.initializeApp(config);
+ 			var db = firebase.firestore();
+ 			var CurrentLocation;
+ 			var Location;
+ 			var location1 = document.getElementById("location1");
+ 			var location2 = document.getElementById("location2");
+ 			var location3 = document.getElementById("location3");
+ 			var location4 = document.getElementById("location4");
+ 			var location5 = document.getElementById("location5");
+ 			
+ 			function Show() {
+ 				var ShowData = document.getElementById("data");
+ 				if (ShowData.style.display == "none") {
+ 						ShowData.style.display = "block";
+ 						
+ 				}
+ 				else {
+ 						ShowData.style.display = "none";
+ 				}
+ 			}
+ 			
+ 			function Cancel() {
+ 			    var CancelData = document.getElementById("data");
+ 			       if (CancelData.style.display == "block") {
+ 			               location1.value = "";
+ 			               location2.value = "";
+ 			               location3.value = "";
+ 			               location4.value = "";
+ 			               location5.value = "";
+ 			       }
+ 			}
+ 			 
+ 			 function Sending() {
+ 			       db.collection("users").doc("CustomerAdderss").set({
+ 			               Location1: location1.value,
+ 			               Location2: location2.value,
+			               Location3: location3.value,
+			               Location4: location4.value,
+			               Location5: location5.value
+ 			       }).then(function() {
+ 			           // console.log("Sending data complete");
+ 			               location1.value = "";
+ 			               location2.value = "";
+ 			               location3.value = "";
+ 			               location4.value = "";
+ 			               location5.value = "";
+                    }).catch(function() {
+ 			           // console.log("Error to sending data"); 
+ 			       });
+ 			 }
+ 			 
+ 			 function Reset() {
+ 			       var input = document.getElementById("address");
+ 			       input.value = "";
+ 			 }
+ 			 
+		     function initMap() {
+        var path;
+        var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 6,
+          center: {lat: 15.870032, lng: 100.99254100000007}
+        });
+        db.collection("users").doc("CurrentPosition").get().then(function(doc) {
+		            if (doc.exists) {
+		               CurrentLocation = doc.data();
+		               // console.log("Get data success");
+		               // console.log(CurrentLocation);
+		               // console.log("Check data: ");
+		               // console.log(doc.data());
+		               Location = new google.maps.Marker({map: map, position: CurrentLocation});
+		            }
+		            else {
+		                    console.log("Connecting Error");
+		            }
+		    });
+		    db.collection("users").doc("CurrentPosition").onSnapshot(function(docs){
+		       if (docs.exists) {
+		           CurreentLocation = docs.data();
+		           // console.log("updata data success");
+		           // console.log(CurrentLocation);
+		           // console.log("Check data: ");
+		           // console.log(docs.data());
+		           Location.setMap(null);
+		           new google.maps.Marker({map: map, position: CurrentLocation});
+		       }
+		       else {
+		           console.log("Error onsnapshot");
+		       } 
+		    });
+		    document.getElementById("path").addEventListener("click", function() {
+		            Searching(map);
+		    });
+		            
+		 }
+		 
+		 function Searching(map) {
+		     var Obj;
+            const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            var urlCons = "https://maps.googleapis.com/maps/api/directions/json?";
+            var key = "AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8";
+            var origin = "มหาวิทยาลัยเกษตรศาสตร์"
+            var destination = document.getElementById("address");
+            const url = urlCons + "origin=" + origin + "&destination=" + destination.value + "&key=" + key;    
+            fetch(proxyurl + url)
+            .then(response => response.text())
+            .then(Obj = contents => JSON.parse(contents))
+            .then(function (Obj) {
+                    startlocation(Obj);
+            })
+            .catch(() => console.log("Error" + url));
+            }
+
+		 
+		 function startlocation(data) {
+		     console.log(data);
+		     var cup;
+		     cup = data.routes[0].legs[0].start_location.lat;
+		     console.log(cup); 
+		 }
+
+     	</script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8&callback=initMap">
+    </script>
+  </body>
+</html>

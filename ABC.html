@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+		
+	}
+	  
+	  
+	        
+	  
+    </style>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <input id="address" type="textbox" value="ที่อยู่">
+      <input id="submit" type="button" value="Find">
+	  <input id="generate" type="button" value="Ganerate">
+    </div>
+	<div id="map"></div>
+    <script>
+		function initMap() {
+        	var map = new google.maps.Map(document.getElementById('map'), {
+          	zoom: 6,
+          	center: {lat: 15.870032, lng: 100.99254100000007}
+        });
+        var Obj;
+        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8";
+        fetch(proxyurl + url)
+        .then(response => response.text())
+        .then(Obj = contents => JSON.parse(contents))
+        .then(function(Obj) {
+        	console.log(Obj.geocoded_waypoints[0].place_id);
+        }) 
+        .catch(() => console.log("Error" + url));
+        
+        }
+        	
+	</script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8&callback=initMap">
+    </script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ABC</title>
+	<meta charset = "utf-08">
+</head>
+<body>
+		<button onclick = "convert()">Test</button>
+		<script>
+		
+		function convert() {
+  		var output = [];
+  		var base2 = [];
+  		var data = "";
+  		var test = -12020000;
+  		var input = "o}nsA";
+  		for (var i = 0; i< input.length; i++) {
+  			output.push(input.charCodeAt(i)-63);
+  		}
+  			console.log(output);
+  			console.log(test.toString(2));
+  			changetobase2(output, base2);
+  			console.log(base2);
+  			split(base2);
+  			console.log(base2);
+  			reverse(base2);
+  			console.log(base2);
+  			data = pushto32(base2, data);
+  			console.log(data);
+  			var realdata = checkdata(data);
+  			console.log(realdata);
+  			var position = realdata * 1e-5;
+  			console.log(position);
+  			
+  		}
+  		
+  			function changetobase2(output, base2) {
+  				for (i = 0; i < output.length; i++) {
+  					base2.push(output[i].toString(2));
+  				}
+  			}
+  			
+  			function split(base2) {
+  				var cup = [];
+  				var newbase = [];
+  				for (i = 0; i< base2.length; i++) {
+  					if (base2[i].length > 5) {
+  						cup = base2[i].split("");
+  						// console.log(cup.length);
+  						newbase[i] = "";
+  							for (j = 1; j< cup.length; j++) {
+  								newbase[i] = newbase[i] + cup[j];
+  							}		
+  					}
+  					else if (base2[i].length == 5) {
+  					          newbase[i] = base2[i];
+  					}
+   					else {
+  							 for (k = base2[i].length; k<=5; k++) {
+  								cup = cup + "0";
+  							}
+  								cup = cup + base2[i];
+  								cup = cup.split("");
+  								newbase[i] = "";
+  							for (j = 1; j< cup.length; j++) {
+  								newbase[i] = newbase[i] + cup[j];
+  							}
+  					}
+  						base2[i] = newbase[i];
+  						cup = [];		
+  					}
+  				}
+  					
+  					function reverse (base2) {
+  							var half = Math.floor(base2.length/2);
+  							var cup;
+  							var length = base2.length-1;
+   							// console.log(half);
+   							// console.log(length);
+  							  for (i = 0; i < half; i++)  {
+  							        cup = base2[i];
+  							        base2[i] = base2[length];
+  							        base2[length] = cup;
+  							        length = length-1;
+  							  }  							    
+  					}
+  					
+  					function pushto32(base2, data) {
+  					    data = "";
+  					    var cup = "";
+  					    for (i = 0; i < base2.length; i++) {
+  					        cup = cup + base2[i];
+  					    }
+  					      if (cup.length < 32) {
+  					          for (i = cup.length; i < 32; i++) {
+  					              data = data + 0;
+  					          }
+  					      }
+  					      data = data + cup;
+  					      // console.log(data);
+  					      return data;
+  					   }
+  					   
+  					   function checkdata(data) {
+  					       var check = data.charAt(31);
+  					       
+  					       if (check == 1)  {
+  					          var cup = data.split("");
+  					          var newdata;
+  					          // console.log(cup);
+  					          for (i = 0; i < cup.length; i++) {
+  					                  if (cup[i] == 1) {
+  					                      cup[i] = "0";
+  					                  }
+  					                  else if (cup[i] == 0) {
+  					                      cup[i] = "1";
+  					                  }
+  					          }
+  					              // console.log(cup);
+  					              newdata = cup[0];
+  					              cup.splice(cup.length-1,1);
+  					              for (i = 0; i < cup.length; i++) {
+  					                  newdata = newdata + cup[i];
+  					              }
+  					              // console.log(newdata);
+  					              var cal = parseInt(newdata, 2)-1;
+  					              // console.log(cal.toString(2));
+  					              newdata = cal.toString(2);
+  					              var cupcup = "";
+  					              cupcup = newdata.split("");
+  					              // console.log(cupcup);
+  					              for (i = 0; i < cupcup.length; i++) {
+  					                  if (cupcup[i] == 1) {
+  					                      cupcup[i] = "0";
+  					                  }
+  					                  else if (cupcup[i] == 0) {
+  					                      cupcup[i] = "1";
+  					                  }
+  					              }
+  					              // console.log(cupcup);
+  					              var newdata = "";
+  					              for (i = 0; i < cupcup.length; i++) {
+  					                  newdata = newdata + cupcup[i];
+  					              }       
+  					             // console.log(newdata);
+  					             var realdata = -changetobase10(newdata);
+  					             console.log(realdata);
+  					             
+  					             return realdata;
+  					        }
+  					        else if (check == 0) {
+  					            var cup = data.split("");
+  					            var newdata = cup[0];
+  					            cup.splice(cup.length-1, 1);
+  					            for (i =0; i < cup.length; i++) {
+  					                newdata = newdata + cup[i];
+  					            }
+  					            // console.log(newdata);
+  					            var realdata = changetobase10(newdata);
+  					            return realdata;
+  					        }
+  					   }
+  					   
+  					   function changetobase10(data) {
+  					       var cup = data.split("");
+  					       var supercup;
+  					       var newdata = "";
+  					       for (i = 0; i < cup.length; i++) {
+  					              if (cup[i] == 1) {
+  					                  supercup = cup.splice(i, cup.length);
+  					                  break;
+  					              }
+  					       }
+  					       // console.log(supercup);
+  					       for (i = 0; i < supercup.length; i++) {
+  					           newdata = newdata +supercup[i];
+  					       }
+  					      // console.log(newdata);
+  					      var base10 = parseInt(newdata, 2).toString(10);
+  					      // console.log(base10);
+  					      return base10;
+  					   }
+  					   
+		</script>
+</body>
+</html>

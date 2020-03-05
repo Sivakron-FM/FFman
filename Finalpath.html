@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-firestore.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 15%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+		
+	}
+	  #data {
+	  	position: absolute;
+	  	top: 60px;
+	  	left: 25%;
+	  	z-index: 5;
+	  	background-color:#fff;
+	  	font-family: 'Roboto','sans-serif';
+		padding: 5px;
+		line-height: 25px;
+		text-align: center;
+		display: none;
+		}
+		
+		#adding {
+		    position: absolute;
+            top: 60px;
+            left: 5%;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            text-align: center;
+            font-family: 'Roboto','sans-serif';
+            line-height: 30px;
+            padding-left: 10px;
+            display: none;
+		}
+		
+	</style>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <button onclick = "Start()">start</button>
+      <button onclick = "Show()">SendData</button>
+    </div>
+    <div id = "adding">
+    <span>Location1: </span> <input id = "destination" type = "textbox"><br>
+    <span>Location2: </span><input id = "position2" type = "textbox"><br>
+    <span>Location3: </span><input id = "position3" type = "textbox"><br>
+    <span>Location4: </span><input id = "position4" type = "textbopx"><br>
+    <span>Location5: </span><input id= "address" type ="textbox"><br>
+      <button onclick = "Reset()">Reset</button><button id = "path">Find</button>   
+    </div>
+    <div id="map"></div>
+    <div id = "data">
+			<span>Location1: </span><input id = "location1" type = "textbox"><br>
+    		<span>Location2: </span><input id = "location2" type = "textbox"><br>
+    		<span>Location3: </span><input id = "location3" type = "textbox"><br>
+			<span>Location4: </span><input id = "location4" type = "textbox"><br>
+			<span>Location5: </span><input id = "location5" type = "textbox"><br>
+			<button onclick = "Cancel()">Reset</button>
+			<button onclick = "Sending()">Send</button>
+    </div>
+  <script>
+		var config = {
+    					apiKey: "AIzaSyBwBhv14BJEc4lUiYtWrBbpM7cMQpZU23w",
+    					authDomain: "application-project-d9934.firebaseapp.com",
+    					databaseURL: "https://application-project-d9934.firebaseio.com",
+    					projectId: "application-project-d9934",
+    					storageBucket: "application-project-d9934.appspot.com",
+    					messagingSenderId: "747241468892",
+    					appId: "1:747241468892:web:7d2a2f05c178d1d0769519",
+    					measurementId: "G-K0JB9TT4G8"
+ 		};
+		firebase.initializeApp(config);
+ 		var db = firebase.firestore();
+		
+		function initMap() {
+        var path;
+        var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 6,
+          center: {lat: 15.870032, lng: 100.99254100000007}
+        });
+		document.getElementById("path").addEventListener("click", function() {
+		            Searching(map);
+		    });
+		}
+		
+		function Searching(map) {
+		     var Obj;
+            const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            var urlCons = "https://maps.googleapis.com/maps/api/directions/json?";
+            var key = "AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8";
+            var position1 = document.getElementById("destination");
+            var position2 = document.getElementById("position2");
+            var position3 = document.getElementById("position3");
+            var position4 = document.getElementById("position4");
+            var position5 = document.getElementById("address");
+            const url = urlCons + "origin=" + position1.value + "&destination=" + position5.value + "&waypoints=" + position2.value + "|" + position3.value + "|" + position4.value + "|" + "&avoid=tolls" + "&key=" + key;    
+            fetch(proxyurl + url)
+            .then(response => response.text())
+            .then(Obj = contents => JSON.parse(contents))
+            .then(function (Obj) {
+                    var startlocation = [];
+                    var endlocation = [];
+                    for (i = 0; i < Obj.routes[0].legs.length; i++) {
+			            startlocation[i] = {lat: Obj.routes[0].legs[i].start_location.lat
+			                        , lng: Obj.routes[0].legs[i].start_location.lng}
+			         }
+ 					 console.log(startlocation);
+ 					for (i = 0; i < Obj.routes[0].legs.length; i++) {
+			            endlocation[i] = {lat: Obj.routes[0].legs[i].end_location.lat
+			                        , lng: Obj.routes[0].legs[i].end_location.lng}
+			         }
+					console.log(endlocation);
+					var markerstart = new google.maps.Marker({
+ 							position: startlocation[0],
+ 							map: map
+ 					});
+ 					var marker = [];
+ 					for (i = 0; i < endlocation.length; i++) {
+ 						marker[i] = new google.maps.Marker({
+ 								position: endlocation[i],
+ 								map: map
+ 						});
+ 					}
+					var path = [[] , [] , [] ,[]];
+					for (i = 0; i < Obj.routes[0].legs.length; i++) {
+							path[i][0] = {lat: Obj.routes[0].legs[i].steps[0].start_location.lat
+											, lng: Obj.routes[0].legs[i].steps[0].start_location.lng};
+						for (j = 0; j < Obj.routes[0].legs[i].steps.length; j++) {
+								path[i][j+1] = {lat: Obj.routes[0].legs[i].steps[j].end_location.lat
+												, lng: Obj.routes[0].legs[i].steps[j].end_location.lng};
+						}
+					}
+ 					// console.log(path);
+ 					var path1 = new google.maps.Polyline({
+ 						path: path[0],
+ 						geodesic: false,
+                   		strokeColor: "#33CCFF",
+                   		strokeOpacity: 1.0,
+                   		strokeWeight: 5
+ 					});
+ 					var path2 = new google.maps.Polyline({
+ 						path: path[1],
+ 						geodesic: false,
+                   		strokeColor: "#33CCFF",
+                   		strokeOpacity: 1.0,
+                   		strokeWeight: 5
+ 					});
+ 					var path3 = new google.maps.Polyline({
+ 						path: path[2],
+ 						geodesic: false,
+                   		strokeColor: "#33CCFF",
+                   		strokeOpacity: 1.0,
+                   		strokeWeight: 5
+ 					});
+ 					var path4 = new google.maps.Polyline({
+ 						path: path[3],
+ 						geodesic: false,
+                   		strokeColor: "#33CCFF",
+                   		strokeOpacity: 1.0,
+                   		strokeWeight: 5
+ 					});
+ 					path1.setMap(map);
+ 					path2.setMap(map);
+ 					path3.setMap(map);
+ 					path4.setMap(map);
+ 					var distance = [];
+ 					for (i = 0; i < Obj.routes[0].legs.length; i++) {
+ 							distance.push(Obj.routes[0].legs[i].distance.text);
+ 					}
+ 					// console.log(distance);
+ 					var duration = [];
+ 					for (i = 0; i < Obj.routes[0].legs.length; i++) {
+ 							duration.push(Obj.routes[0].legs[i].duration.text);
+ 					}
+ 					// console.log(duration);
+ 					var textinfo = [];
+ 					var nameplace = [];
+ 					position = [position1.value, position2.value, position3.value, position4.value, position5.value]
+ 					for (i = 0; i < distance.length; i++) {
+ 						nameplace[i] = position[i+1];
+ 						textinfo[i] = nameplace[i] + "        distance = " + distance[i] + "    duration = " + duration[i];
+ 					}
+ 					// console.log(textinfo);
+ 					var infowindow = [];
+ 					for (i = 0; i < endlocation.length; i++) {
+ 							infowindow[i] = new google.maps.InfoWindow({
+ 									content: textinfo[i]
+ 							});
+ 					}
+ 					var infostart = new google.maps.InfoWindow({
+ 								content: position1.value
+ 					});
+ 					markerstart.addListener("click", function() {
+ 							infostart.open(map, markerstart);
+ 					})
+ 					 marker[0].addListener("click", function() {
+ 							infowindow[0].open(map, marker[0]);
+ 					});
+ 					marker[1].addListener("click", function() {
+ 							infowindow[1].open(map, marker[1]);
+ 					});
+ 					marker[2].addListener("click", function() {
+ 							infowindow[2].open(map, marker[2]);
+ 					});
+ 					marker[3].addListener("click", function() {
+ 							infowindow[3].open(map, marker[3]);
+ 					});
+ 					// map.setZoom(11);
+                   	// map.setCenter(endlocation[endlocation.length]);
+ 			})
+            .catch(() => console.log("Error" + url));
+            }
+
+            function Start() {
+                    if (adding.style.display == "none") {
+                        adding.style.display = "block";
+                    }
+                    else {
+                        adding.style.display = "none";
+                    }
+            }
+				 
+			function Reset() {
+			        document.getElementById("destination").value = "";
+			        document.getElementById("position2").value = "";
+			        document.getElementById("position3").value = "";
+			        document.getElementById("position4").value = "";
+			        document.getElementById("address").value = "";
+			}
+			
+			function Show() {
+				var showdata = document.getElementById("data");
+				if (data.style.display == "none") {
+						data.style.display = "block";
+				}
+				else {
+						data.style.display = "none";
+				}
+ 			}
+ 			
+ 			function Cancel() {
+ 					var canceldata = document.getElementById("data");
+ 					if (canceldata.style.display == "block") {
+ 							location1.value = "";
+ 			               	location2.value = "";
+ 			               	location3.value = "";
+ 			               	location4.value = "";
+ 			               	location5.value = "";
+ 					}
+ 			}
+ 			
+ 			function Sending() {
+ 					db.collection("users").doc("CustomerAdderss").set({
+ 			               Location1: location1.value,
+ 			               Location2: location2.value,
+			               Location3: location3.value,
+			               Location4: location4.value,
+			               Location5: location5.value
+ 			       }).then(function() {
+ 			           // console.log("Sending data complete");
+ 			               location1.value = "";
+ 			               location2.value = "";
+ 			               location3.value = "";
+ 			               location4.value = "";
+ 			               location5.value = "";
+                    }).catch(function() {
+ 			           // console.log("Error to sending data"); 
+ 			       });
+				}
+ 			
+	</script>
+ 	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSXAdZS2A74bQHs0YtAoRvnD6lIVRjHr8&callback=initMap">
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+const functions = require('firebase-functions');
+
+const admin = require('firebase-admin');
+
+admin.initializeApp(functions.config().firebase);
+
+var  db = admin.database();
+
+exports.Fronk = functions.https.onRequest((request,response) 
+{
+	if (request.method == 'GET') {
+			var ref = db.ref("Users")
+			ref.once("value", functions(snapshot){
+					response.contentType('app/json');
+					response.send(JSON.stringify(snapshot.val()));
+				});
+		}
+});

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<title>Firebase real time database</title>
+				<meta charset = "utf-8">
+				<meta name = "Connect firebase database" content = "Connecting">
+		</head>
+		<body>
+				<h2>FIREBASE DATABASE REAL TIME</h2>
+				<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-app.js"></script>
+				<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-firestore.js"></script>
+				
+				<script>
+  							var firebaseConfig = {
+    									apiKey: "AIzaSyBwBhv14BJEc4lUiYtWrBbpM7cMQpZU23w",
+    									authDomain: "application-project-d9934.firebaseapp.com",
+    									databaseURL: "https://application-project-d9934.firebaseio.com",
+    									projectId: "application-project-d9934",
+    									storageBucket: "application-project-d9934.appspot.com",
+    									messagingSenderId: "747241468892",
+    									appId: "1:747241468892:web:39bdeddef2e58fe1769519",
+    									measurementId: "G-QTQDQMR4JB"
+  						};
+  								// Initialize Firebase
+  							firebase.initializeApp(firebaseConfig);
+  			
+							var database = firebase.database();
+							var addData = firebase.database().ref("Users");
+									addData.child("Name").set("Sivakron");
+									addData.child("Surname").set("Leelanuwong");
+					</script>
+
+				
+  			</body>
+</html>

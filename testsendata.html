@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+			<meta charset = "utf-08">
+			<title>Test</title>
+	</head>
+	<style>
+		.senddata{
+			display: inline-block;
+  			border-radius: 4px;
+  			background-color: #f4511e;
+  			border: none;
+  			color: #FFFFFF;
+  			text-align: center;
+  			font-size: 28px;
+  			padding: 20px;
+  			width: 200px;
+  			transition: all 0.5s;
+  			cursor: pointer;
+  			margin: 5px;
+		}
+		#data {
+			display: none;
+			width: 100%;
+  			padding: 50px 0;
+  			text-align: center;
+  			background-color: lightblue;
+  			margin-top: 10px;
+		}
+	</style>
+	<body>
+			<input class = "senddata" id = "senddata", type = "button", value = "SendData">
+			<button onclick = "myFunction()">Test</button>
+			<div id = "data">
+				<span>First: </span><input id = "first" type = "text"><br>
+				<span>Second: </span><input id = "second" type = "text"><br>
+				<span>Third: </span><input id = "third", type = "text"><br>
+				<span>Forth</span><input id = "fouth" type = "text"><br>
+				<span>Fifth</span><input id = "fifth" type = "text">
+			</div>
+				<script>		
+						function myFunction() {
+							var Data = document.getElementById("data");
+								if (Data.style.display == "none") {
+									Data.style.display = "block";
+								}
+								else {
+									Data.style.display = "none";
+								}
+						}
+				</script>
+	</body>
+</html>
